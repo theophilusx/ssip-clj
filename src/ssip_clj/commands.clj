@@ -1,6 +1,6 @@
 ;;      Filename: commands.clj
 ;; Creation Date: Saturday, 28 November 2015 06:42 PM AEDT
-;; Last Modified: Sunday, 29 November 2015 05:53 PM AEDT
+;; Last Modified: Saturday, 05 December 2015 08:50 AM AEDT
 ;;        Author: Tim Cross <theophilusx AT gmail.com>
 ;;   Description:
 ;;
@@ -15,21 +15,46 @@
     \4 :invalid-argument
     \5 :invalid-command
     \7 :event-notification
-    :default :unknown-code))
+    :unknown-code))
 
+(def key-names #{"space" "underscore" "double-quote" "alt" "control"
+                 "hyper" "meta" "shift" "super" "backspace" "break"
+                 "delete" "down" "end" "enter" "escape" "f1" "f2"
+                 "f3" "f4" "f5" "f6" "f7" "f8" "f9" "f10" "f11" "f12"
+                 "f13" "f14" "f15" "f16" "f17" "f18" "f19" "f20" "f21"
+                 "f22" "f23" "f24" "home" "insert" "kp-*" "kp-+" "kp--"
+                 "kp-." "kp-/" "kp-0" "kp-1" "kp-2" "kp-3" "kp-4" "kp-5"
+                 "kp-6" "kp-7" "kp-8" "kp-9" "kp-enter" "left" "menu" "next"
+                 "num-lock" "pause" "print" "prior" "return" "right"
+                 "scroll-lock" "tab" "up" "window"})
 
+(def key-regexp #"[a-zA-Z0-9\!\@\#\$\%\^\&\*\(\)\_\-\+\=\[\]\{\}\;\:\\]")
 
 (defn speak [v]
-  {:cmd :speak
-   :value v})
+  (cond
+    (nil? v) {:cmd :no-op :value nil}
+    (string? v) {:cmd :speak :value [v]}
+    (and  (vector? v)
+          (= 0 (count v))) {:cmd :no-op :value nil}
+    (vector? v) {:cmd :speak :value v}
+    :else {:cmd :error :value {:cmd :speak :value v}}))
 
 (defn speak-char [v]
-  {:cmd :char
-   :value v})
+  (cond
+    (nil? v) {:cmd :no-op :value nil}
+    (and (string? v)
+         (= 0 (count v))) {:cmd :no-op :value nil}
+    (and (string? v)
+         (= " " v)) {:cmd :char :value "space"}
+    (char? v) {:cmd :char :value v}
+    (string? v) {:cmd :char :value (first v)}
+    :else {:cmd :error :value {:cmd :char :value v}}))
 
 (defn speak-key [v]
-  {:cmd :key
-   :value v})
+  (cond
+    (contains? key-names v) {:cmd :key :value v}
+    (re-matches key-regexp v) {:cmd :key :value v}
+    :else {:cmd :error :value {:cmd :key :value v}}))
 
 (defn sound-icon [v]
   {:cmd :sound_icon
@@ -52,8 +77,13 @@
    :value "self"})
 
 (defn set-priority [v]
-  {:cmd :set
-   :value (str "self priority " v)})
+  (condp = v
+    :important {:cmd :set :value "self priority important"}
+    :message {:cmd :set :value "self priority message"}
+    :text {:cmd :set :value "self priority text"}
+    :notification {:cmd :set :value "self priority notification"}
+    :progress {:cmd :set :value "self priority progress"}
+    {:cmd :error :value {:cmd :set :value v}}))
 
 (defn speech-block [v]
   {:cmd :block

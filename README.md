@@ -1,6 +1,6 @@
 # ssip-clj
 
-A very simple clojure library to interface with a SSIP client (Speech Synthesis
+A very simple clojure library to interface with a SSIP server (Speech Synthesis
 Interface Protocol), for example speech-dispatcher
 <http://devel.freebsoft.org/speechd>
 
