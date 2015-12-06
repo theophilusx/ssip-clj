@@ -1,6 +1,6 @@
 ;;      Filename: commands.clj
 ;; Creation Date: Saturday, 28 November 2015 06:42 PM AEDT
-;; Last Modified: Saturday, 05 December 2015 08:50 AM AEDT
+;; Last Modified: Sunday, 06 December 2015 05:36 PM AEDT
 ;;        Author: Tim Cross <theophilusx AT gmail.com>
 ;;   Description:
 ;;
@@ -160,3 +160,7 @@
 (defn quit-speech []
   {:cmd :quit
    :value ""})
+
+(defn list-modules []
+  {:cmd :list-output-modules
+   :value "LIST OUTPUT_MODULES"})
