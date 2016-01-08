@@ -40,7 +40,8 @@
       (read-from sock-in cmd))))
 
 (defn do-command [cmd sock-out sock-in]
-  (write-to sock-out (str (name (:cmd cmd) " " (:value cmd))))
+  (println (str "do-command: cmd = " cmd " str = " (name (:cmd cmd)) " " (:value cmd)))
+  (write-to sock-out (str (name (:cmd cmd)) " " (:value cmd)))
   (read-from sock-in cmd))
 
 (defn do-list-output-modules [cmd sock-out sock-in]
@@ -68,7 +69,6 @@
     (with-open [sock (Socket. "localhost" 6560)
                 socket-write (io/writer sock)
                 socket-read (BufferedReader. (io/reader sock))]
-      (println "ssip-connection: socket connections established")
       (loop [v (<! request)]
         (when v
           (case (:cmd v)
@@ -83,5 +83,4 @@
                        (>! response v))
             (>! response (do-command v socket-write socket-read)))
           (recur (<! request))))
-      (do-quit socket-write socket-read)
-      (println "ssip-connection: exiting"))))
+      (do-quit socket-write socket-read))))
