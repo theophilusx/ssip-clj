@@ -1,13 +1,15 @@
 ;;      Filename: commands.clj
 ;; Creation Date: Saturday, 28 November 2015 06:42 PM AEDT
-;; Last Modified: Sunday, 06 December 2015 05:36 PM AEDT
+;; Last Modified: Sunday, 22 January 2017 07:37 PM AEDT
 ;;        Author: Tim Cross <theophilusx AT gmail.com>
 ;;   Description:
 ;;
 
 (ns ssip-clj.commands)
 
-(defn return-code [v]
+(defn return-code
+  "Maps SSIP return code to keyword."
+  [v]
   (condp = (first v)
     \1 :information
     \2 :ok
@@ -17,7 +19,9 @@
     \7 :event-notification
     :unknown-code))
 
-(def key-names #{"space" "underscore" "double-quote" "alt" "control"
+(def key-names
+  "Set of the names used by SSIP for special keys."
+  #{"space" "underscore" "double-quote" "alt" "control"
                  "hyper" "meta" "shift" "super" "backspace" "break"
                  "delete" "down" "end" "enter" "escape" "f1" "f2"
                  "f3" "f4" "f5" "f6" "f7" "f8" "f9" "f10" "f11" "f12"
@@ -30,7 +34,9 @@
 
 (def key-regexp #"[a-zA-Z0-9\!\@\#\$\%\^\&\*\(\)\_\-\+\=\[\]\{\}\;\:\\]")
 
-(defn speak [v]
+(defn speak
+  "Creates a speak command map."
+  [v]
   (cond
     (nil? v) {:cmd :no-op :value nil}
     (string? v) {:cmd :speak :value [v]}
@@ -39,7 +45,9 @@
     (vector? v) {:cmd :speak :value v}
     :else {:cmd :error :value {:cmd :speak :value v}}))
 
-(defn speak-char [v]
+(defn speak-char
+  "Creates a command map for speaking a character."
+  [v]
   (cond
     (nil? v) {:cmd :no-op :value nil}
     (and (string? v)
@@ -50,25 +58,35 @@
     (string? v) {:cmd :char :value (first v)}
     :else {:cmd :error :value {:cmd :char :value v}}))
 
-(defn speak-key [v]
+(defn speak-key
+  "Create a speak key command map."
+  [v]
   (cond
     (contains? key-names v) {:cmd :key :value v}
     (re-matches key-regexp v) {:cmd :key :value v}
     :else {:cmd :error :value {:cmd :key :value v}}))
 
-(defn sound-icon [v]
+(defn sound-icon
+  "Create a play sound icon command map."
+  [v]
   {:cmd :sound_icon
    :value v})
 
-(defn stop-speech []
+(defn stop-speech
+  "Create command map to stop speech."
+  []
   {:cmd :stop
    :value "self"})
 
-(defn cancel-speech []
+(defn cancel-speech
+  "Create command map to cancel speech."
+  []
   {:cmd :cancel
    :value "self"})
 
-(defn pause-speech []
+(defn pause-speech
+  "Create command map to pause speech."
+  []
   {:cmd :pause
    :value "self"})
 
