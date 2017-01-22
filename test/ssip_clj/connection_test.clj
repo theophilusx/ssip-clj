@@ -1,15 +1,15 @@
 ;;      Filename: connection_test.clj
 ;; Creation Date: Thursday, 10 December 2015 05:54 PM AEDT
-;; Last Modified: Friday, 08 January 2016 07:52 PM AEDT
+;; Last Modified: Saturday, 16 January 2016 02:23 PM AEDT
 ;;        Author: Tim Cross <theophilusx AT gmail.com>
 ;;   Description:
 ;;
 
 (ns ssip-clj.connection-test
-  (:require [clojure.test :refer :all]
-            [ssip-clj.commands :as cmd]
+  (:require [clojure.core.async :refer [<!! >!! chan close!]]
+            [clojure.test :refer :all]
             [environ.core :refer [env]]
-            [clojure.core.async :refer [chan <! >! <!! >!! go close!]]
+            [ssip-clj.commands :as cmd]
             [ssip-clj.connection :refer :all]))
 
 (def ssip-host (env :ssip-host))
